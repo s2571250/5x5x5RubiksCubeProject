@@ -2,4 +2,6 @@ cff-version: 1.2.0
 message: "I need to cite this in my Bachelors assignment."
 authors:  Xander Heij
 title: "5x5x5 Rubik's cube model"
+version: 2.0.4
+doi: 10.5281/zenodo.1234
 date-released: 30-06-23
