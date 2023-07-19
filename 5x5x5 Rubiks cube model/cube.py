@@ -1,3 +1,4 @@
+from math import floor
 INDEX_U = 0
 INDEX_R = 1
 INDEX_F = 2
@@ -51,6 +52,36 @@ def update_cubestring(fl):
             new_str += fl[i][j]
     return new_str
 
+class Edge:
+    def __init__(self, str, i, j):
+        self.str = str
+        self.i = i
+        self.j = j
+        self.fi = floor(i / 9)
+        self.fj = floor(j / 9)
+        self.i5 = 6 + (i % 9) + 2 * floor((i % 9) / 3) + 25 * floor(i / 9)
+        self.j5 = 6 + (j % 9) + 2 * floor((j % 9) / 3) + 25 * floor(j / 9)
+        self.orderedstr = "".join(sorted(str))
+
+
+    def __str__(self):
+        return self.str
+class Corner:
+    def __init__(self, str, i, j, k):
+        self.str = str
+        self.i = i
+        self.j = j
+        self.k = k
+        self.fi = floor(i / 9)
+        self.fj = floor(i / 9)
+        self.jk = floor(i / 9)
+        self.i5 = 6 + (i % 9) + 2 * floor((i % 9) / 3) + 25 * floor(i / 9)
+        self.j5 = 6 + (j % 9) + 2 * floor((j % 9) / 3) + 25 * floor(j / 9)
+        self.k5 = 6 + (k % 9) + 2 * floor((k % 9) / 3) + 25 * floor(k / 9)
+        self.orderedstr = "".join(sorted(str))
+
+    def __str__(self):
+        return self.str
 class Cube:
     def __init__(self, cube_string):
         self.cube_string = cube_string
