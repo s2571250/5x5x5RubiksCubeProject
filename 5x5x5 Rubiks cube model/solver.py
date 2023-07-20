@@ -172,7 +172,7 @@ def find_other_3cycle(wrong_corners, corners_to_make, start_wc, start_ctm, exces
             if ctm1 == start_ctm:
                 continue
             excess1 = set(wc1.str) - set(ctm1.str)  
-            print(excess, need, excess1) 
+            # print(excess, need, excess1) 
             if need == excess1:
                 for wc2 in wrong_corners:
                     if wc2 == start_wc or wc2 == wc1:
@@ -384,6 +384,122 @@ def step1corners(cube : Cube, solution):
 
     # if len(correct_edges) < 12:
     #     pass
+
+def step1edges(cube : Cube, solution):    
+    _, edgesO = cube_str_to_piecesO(cube.get_3x3_repr_cube_string())
+    _, correct_edgesO = cube_str_to_piecesO(solved_cube_string)
+    correct_edges_dir = {} 
+    edges_to_make = []
+    for c in edgesO:
+        correct_edges_dir[c.orderedstr] = c
+        edges_to_make.append(c)
+    wrong_edges = [] 
+    wrong_edges_dict = {}
+    for c in edgesO:
+        if c.orderedstr not in ordered_correct_edges:
+            wrong_edges.append(c)
+            wrong_edges_dict[c.str] = c
+        else:
+            if correct_edges_dir[c.orderedstr] in edges_to_make:
+                edges_to_make.remove(correct_edges_dir[c.orderedstr])
+            else:
+                wrong_edges.append(c)
+                wrong_edges_dict[c.str] = c
+    
+    if len(edges_to_make) > 0:
+        ctm_dict = {}
+        lowest_freq = 2
+        lowest_freq_corner = edges_to_make[0].str
+        for etm in edges_to_make:
+            lowest_count = 2
+            lowest_diff_corners = []
+            for we in wrong_edges:
+                diff_count = len(set(etm.str) - set(we.str))
+                # print(wc.str, ctm.str, diff_count)
+                if diff_count < lowest_count:
+                    lowest_count = diff_count
+                    lowest_diff_corners = [we]
+                elif diff_count == lowest_count:
+                    lowest_diff_corners.append(we)
+            # print("===")
+            freq = len(lowest_diff_corners)
+            if freq < lowest_freq:
+                lowest_freq = freq
+                lowest_freq_corner = etm.str
+            ctm_dict[etm.str] = [etm, lowest_count, lowest_diff_corners]
+
+        start_we = ctm_dict[lowest_freq_corner][2][0]
+        start_etm = ctm_dict[lowest_freq_corner][0]
+        
+        
+        # print(">", start_wc.str, start_ctm.str)
+        
+        need = set(start_etm.str) - set(start_we.str)
+
+        excess = list(set(start_we.str) - set(start_etm.str))   
+        we_dict = {}
+        for i in range(3):
+            if start_we.str[i] in we_dict:
+                we_dict[start_we.str[i]] += 1
+            else:
+                we_dict[start_we.str[i]] = 0
+        for char in we_dict.keys():
+            for _ in range(we_dict[char]):
+                excess.append(char)
+        excess = set(excess)
+
+        if len(excess) == 1 and len(wrong_edges) == 2:
+            my2cycle = find_2cycle(wrong_edges, edges_to_make, start_we, start_etm, excess, need)
+            if len(my2cycle) == 2:
+                cube = Cube(cycleNpieces(cube.cube_string, my2cycle))
+                solution.append(2)
+                step1corners(cube, solution)
+            else:
+                print("error")
+                return 0
+        else:
+        # check if anyone needs the excess
+            my3cycle = find_simple_3cycle(wrong_edges, edges_to_make, start_we, start_etm, excess, need)
+            if len(my3cycle) == 3:
+                cube = Cube(cycleNpieces(cube.cube_string, my3cycle))
+                solution.append(3)
+                step1corners(cube, solution)
+            else:
+                find_other_3cycle(wrong_edges, edges_to_make, start_we, start_etm, excess, need)
+                if len(my3cycle) == 3:
+                    cube = Cube(cycleNpieces(cube.cube_string, my3cycle))
+                    solution.append(3)
+                    step1corners(cube, solution)
+                else:
+                    print("error")
+                    return 0
+    else:
+        no_parity = no_edge_parity(cube.get_3x3_repr_cube_string())
+        if not no_parity:
+            cube_str_copy = cube.cube_string
+            a,b = cube_str_copy[13],cube_str_copy[32]
+            cube_str_copy = cube_str_copy[:13] + b + cube_str_copy[13 + 1:]
+            cube_str_copy = cube_str_copy[:32] + a + cube_str_copy[32 + 1:]
+            if no_corner_parity(Cube(cube_str_copy).get_3x3_repr_cube_string()):
+                print("edge flip parity")
+                solution.append(2)
+            else:
+                cube_str_copy = cube.cube_string
+                a,b,c,d = cube_str_copy[17],cube_str_copy[57],cube_str_copy[67],cube_str_copy[82]
+                cube_str_copy = cube_str_copy[:17] + d + cube_str_copy[17 + 1:]
+                cube_str_copy = cube_str_copy[:57] + c + cube_str_copy[57 + 1:]
+                cube_str_copy = cube_str_copy[:67] + b + cube_str_copy[67 + 1:]
+                cube_str_copy = cube_str_copy[:82] + a + cube_str_copy[82 + 1:]
+                if no_corner_parity(Cube(cube_str_copy).get_3x3_repr_cube_string()):
+                    print("edge parity")
+                    solution.append(3)
+                    solution.append(3)
+                else:
+                    print("parity error")
+                    return 0
+            cube = Cube(cube_str_copy)
+        print(solution)
+        print("done")
 
 def step2(cube, solution):
     pass
