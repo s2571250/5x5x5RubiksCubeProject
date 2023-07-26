@@ -59,7 +59,7 @@ def count_len(result):
     return score
 
 freq = {None: 0}
-N = 100
+N = 1000
 f = open("simulation/states.txt", "r")
 for x in range(N):
     state = f.readline().strip()
