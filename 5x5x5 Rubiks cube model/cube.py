@@ -57,8 +57,8 @@ class Edge:
         self.str = str
         self.i = i
         self.j = j
-        self.fi = floor(i / 9)
-        self.fj = floor(j / 9)
+        self.indices = [i,j]
+        self.face = [floor(i / 9), floor(j / 9)]
         self.i5 = 6 + (i % 9) + 2 * floor((i % 9) / 3) + 25 * floor(i / 9)
         self.j5 = 6 + (j % 9) + 2 * floor((j % 9) / 3) + 25 * floor(j / 9)
         self.orderedstr = "".join(sorted(str))
@@ -69,19 +69,20 @@ class Edge:
 class Corner:
     def __init__(self, str, i, j, k):
         self.str = str
+        self.correctorientation = [str, str[1]+str[2]+str[0], str[2]+str[0]+str[1]]
         self.i = i
         self.j = j
         self.k = k
-        self.fi = floor(i / 9)
-        self.fj = floor(i / 9)
-        self.jk = floor(i / 9)
+        self.face = [floor(i / 9), floor(j / 9), floor(k / 9)]
         self.i5 = 6 + (i % 9) + 2 * floor((i % 9) / 3) + 25 * floor(i / 9)
         self.j5 = 6 + (j % 9) + 2 * floor((j % 9) / 3) + 25 * floor(j / 9)
         self.k5 = 6 + (k % 9) + 2 * floor((k % 9) / 3) + 25 * floor(k / 9)
+        self.indices = [self.i5,self.j5,self.k5]
         self.orderedstr = "".join(sorted(str))
 
     def __str__(self):
         return self.str
+    
 class Cube:
     def __init__(self, cube_string):
         self.cube_string = cube_string
@@ -93,6 +94,16 @@ class Cube:
             self.facelets[INDEX_D].append(cube_string[INDEX_D * 25 + i])
             self.facelets[INDEX_L].append(cube_string[INDEX_L * 25 + i])
             self.facelets[INDEX_B].append(cube_string[INDEX_B * 25 + i])
+
+    def update_facelets(self):        
+        self.facelets = [[],[],[],[],[],[]]
+        for i in range(25):
+            self.facelets[INDEX_U].append(self.cube_string[INDEX_U * 25 + i])
+            self.facelets[INDEX_R].append(self.cube_string[INDEX_R * 25 + i])
+            self.facelets[INDEX_F].append(self.cube_string[INDEX_F * 25 + i])
+            self.facelets[INDEX_D].append(self.cube_string[INDEX_D * 25 + i])
+            self.facelets[INDEX_L].append(self.cube_string[INDEX_L * 25 + i])
+            self.facelets[INDEX_B].append(self.cube_string[INDEX_B * 25 + i])
 
     def get_facelets(self):
         return self.facelets

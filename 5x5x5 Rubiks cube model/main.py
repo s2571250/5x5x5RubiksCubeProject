@@ -29,23 +29,53 @@ def scramble_cube(cube, n):
 def is_solved(cube : Cube):
     return cube.cube_string == solved_cube_string
 
-# freqC = {}
-# freqE = {}
 
 # cube = Cube("LUUDDFFDDDRUUDLDFFDBBRBLUBLFLBLLBUUURRLFURLBUDBBRULFDDRFUDBFFLFUBDBBDBUDRDRRFBRFUDLFRRDDFLFRRLUULLRLFRUFDLURRLUBLURBFFRBBUDBFRBFFDRLRBUDFBULLUBLRFDDBL")
 # cube = Cube("BUDUURDUURUUUURBLBLDLLLDFDLDUFBRFRURRRUUDUFUFBFFLBDBBBLLFDDLDLFFBFULFFRLLFRDDULDDRFFLRLDDUBFBLUUDDUUUDRRBDLRDULDLRFRDBBRLUFFFRFLBLRBDBRBBBRFRBLRBRFBBF")
+
+# print(cube.cube_string)
+# solution = solver.solve(cube)
+# print(solution)
+
+#cube = Cube("RFLBRDLFFRRBUFRDDLURBRFRUFDDDUUDUULDLRDLFDDLURLUFFDBDULFLFBLBBFRLRBBRRBFBRBLLRFUFFDUBFRDFLUULBULBDFLDLULRDLRBDFRLDUUFBRBULRUDFUFDFBDURBBUBUUBRLFRDLBDB")
+# N = 25
+# for x in range(N): 
+#     cube = Cube(solved_cube_string)
+#     scramble_cube(cube, 60)
+#     print(cube.cube_string)
+#     solution = solver.solve(cube)
+#     print(solution)
+
+# cube = Cube(solved_cube_string)
 # solver.solve(cube)
 
-cube = Cube(solved_cube_string)
-print(cube)
+def count_len(result):
+    score = 0
+    for r in result:
+        if r == 2:
+            score += 2
+        if r == 3:
+            score += 1
+    return score
 
+freq = {None: 0}
 N = 100
 f = open("simulation/states.txt", "r")
 for x in range(N):
     state = f.readline().strip()
     cube = Cube(state)
-    solver.solve(cube)
+    result = solver.solve(cube)
+    if result == None:
+        freq[None] += 1
+    elif count_len(result) in freq:
+        freq[count_len(result)] += 1
+    else: 
+        freq[count_len(result)] = 1
+    fw = open("simulation_results.txt", "a")
+    fw.write(str(result) + "\n")
+    fw.close()
 f.close()
+print(freq)
 
 # cube = Cube(solved_cube_string)
 # corners, edges = solver.cube_str_to_pieces(cube.get_3x3_repr_cube_string())
@@ -56,10 +86,13 @@ f.close()
 # print(set(solver.ordered_correct_corners) - set(correct_corners))
 # print(set(solver.ordered_correct_edges) - set(correct_edges))
 
+# freqC = {}
+# freqE = {}
+
 # for x in range(100):
 #     cube = Cube(solved_cube_string)
 #     scramble = scramble_cube(cube, 60)
-#     bestC, parC, bestE, parE, alg = solver.step1(cube, [])
+#     bestC, parC, bestE, parE, alg = solver.check_pieces(cube, [])
 #     if (bestC + parC) not in freqC:
 #         freqC[bestC + parC] = 1
 #     else:
